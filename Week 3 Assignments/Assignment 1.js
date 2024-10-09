@@ -1,4 +1,4 @@
-// All of Assignment 1 should be done in Node
+// All of Assignment 1 should be done in Terminal using Node
 // --------------------
 // Part 1
 1 + 3;
