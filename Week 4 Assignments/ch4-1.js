@@ -1,4 +1,4 @@
-let x = "BC Ko";
+var x = "BC Ko";
 let x = 0;
 
 console.log(x);
