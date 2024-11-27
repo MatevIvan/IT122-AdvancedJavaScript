@@ -1,0 +1,136 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <title>Car Facts Button</title>
+  </head>
+  <style>
+    body {
+      width: 80%;
+    }
+    #user-form {
+      display: flex;
+      flex-direction: column;
+    }
+    .child {
+      flex-grow: 1;
+      margin: 5px;
+    }
+  </style>
+
+  <body>
+    <form id="user-form">
+      <div class="user-input child">
+        <label for="Make">Make</label> <input type="text" id="Make" name="Make" value="ford" />
+      </div>
+      <div class="user-input child">
+        <label for="Model">Model</label> <input type="text" id="Model" name="Model" value="f150" />
+      </div>
+      <div class="user-input child">
+        <label for="Year">Year</label> <input type="text" id="Year" name="Year" value="2020" />
+      </div>
+      <div class="user-input child">
+        <label for="number-of-results">number of results</label>
+        <input type="text" id="number-of-results" name="number-of-results" value="10" />
+      </div>
+    </form>
+    <button class="child" onclick="showCarFact()">Get Car Facts</button>
+
+    <p id="carfact"></p>
+
+    <script>
+      var isError = false;
+      async function getCarFact() {
+        const api_endpoint = `https://api.api-ninjas.com/v1/cars`;
+        const make = document.getElementById("Make").value;
+        const model = document.getElementById("Model").value;
+        const year = document.getElementById("Year").value;
+        const numberOfResults = document.getElementById("number-of-results").value;
+        let makeText = "";
+        let modelText = "";
+        let yearText = "";
+        let numberOfResultsText = "";
+
+        let errorMessage = "";
+        // handle User Input
+        if (make === "") {
+          errorMessage += "Make of car cannot be left blank\n";
+        } else {
+          makeText = "&make=" + make;
+        }
+        if (model === "") {
+          errorMessage += "Model of car cannot be left blank\n";
+        } else {
+          modelText = "&model=" + model;
+        }
+        const yearNumber = parseInt(year);
+        if (!isNaN(yearNumber)) {
+          yearText = "&year=" + yearNumber;
+        }
+        const numberOfResultsInt = parseInt(numberOfResults);
+        if (!isNaN(numberOfResultsInt)) {
+          if (1 <= numberOfResultsInt <= 50) {
+            numberOfResultsText = "?limit=" + numberOfResultsInt;
+          } else {
+            numberOfResultsText = "?limit=10";
+          }
+        } else {
+          numberOfResultsText = "?limit=10";
+        }
+
+        if (errorMessage) {
+          isError = true;
+          document.getElementById("carfact").style.color = "red";
+          return errorMessage;
+        } else {
+          document.getElementById("carfact").style.color = "black";
+        }
+
+        const URL = api_endpoint + numberOfResultsText + makeText + modelText + yearText;
+        const response = await fetch(URL, {
+          headers: {
+            "X-Api-Key": "U2td7BdGa3qG+HXK2RcvQQ==AapTsjNKga7LC4Qz",
+          },
+        });
+        const json_response = await response.json();
+        return json_response;
+      }
+      async function showCarFact() {
+        let carData = [];
+        isError = false;
+        const carFactResponse = await getCarFact();
+        const paragraphTag = document.getElementById("carfact");
+        //Made changes on JSON.stringify with paramater (remove text, replace by carFactResponse)
+        if (isError) {
+          paragraphTag.innerText = carFactResponse;
+        } else {
+          carData = carFactResponse;
+          document.write(
+            `<table>
+                <thead>
+                    <th>Make</th>
+                    <th>Model</th>
+                    <th>Year</th>
+                    <th>City mpg</th>
+                    <th>Highway mpg</th>
+                </thead>
+                <tbody>`
+          );
+          carData.map((data) => {
+            document.write(
+              `<tr>
+                <td>${data.make}</td>
+                <td>${data.model}</td>
+                <td>${data.year}</td>
+                <td>${data.city_mpg}</td>
+                <td>${data.highway_mpg}</td>
+              </tr>`
+            );
+          });
+          document.write(`</tbody></table>`);
+          document.append(`<h1>TEST</h1>`);
+        }
+      }
+    </script>
+  </body>
+</html>

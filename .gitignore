@@ -37,3 +37,6 @@ desktop.ini
 # Temporary files
 *.swp
 *~
+
+# Secrets
+secrets.json
